@@ -32,7 +32,7 @@ This connector uses Gmail API and requires OAuth2.0 authentication:
 
 ### Create configuration
 
-Create a `secret/config.json` file:
+Create a `secrets/config.json` file:
 ```json
 {
   "client_id": "your-client-id",
@@ -46,22 +46,22 @@ Create a `secret/config.json` file:
 
 ```bash
 # Test the connection
-poetry run python main.py check --config secret/config.json
+poetry run python main.py check --config secrets/config.json
 
 # Discover available streams
-poetry run python main.py discover --config secret/config.json
+poetry run python main.py discover --config secrets/config.json
 
 # Read data
-poetry run python main.py read --config secret/config.json --catalog configured_catalog.json
+poetry run python main.py read --config secrets/config.json --catalog configured_catalog.json
 ```
 
 ### Using the connector
 
 ```bash
 poetry run source-gmail spec
-poetry run source-gmail check --config secret/config.json
-poetry run source-gmail discover --config secret/config.json
-poetry run source-gmail read --config secret/config.json --catalog configured_catalog.json
+poetry run source-gmail check --config secrets/config.json
+poetry run source-gmail discover --config secrets/config.json
+poetry run source-gmail read --config secrets/config.json --catalog configured_catalog.json
 ```
 
 ## Features
