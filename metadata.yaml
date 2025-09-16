@@ -1,0 +1,33 @@
+data:
+  ab_internal:
+    ql: 100
+    sl: 100
+  connectorBuildOptions:
+    baseImage: docker.io/airbyte/python-connector-base:3.0.0@sha256:98ea29af46dd6e58d00cbcdcbbf5f2e1aade2c85c19b83ad2b59ff91e19eaa05
+  connectorSubtype: api
+  connectorType: source
+  definitionId: 4fa22f84-0ab2-4916-b2d8-ea3e72d56c18
+  dockerImageTag: 0.1.0
+  dockerRepository: airbyte/source-gmail
+  documentationUrl: https://docs.airbyte.com/integrations/sources/gmail
+  githubIssueLabel: source-gmail
+  icon: icon.svg
+  license: MIT
+  maxSecondsBetweenMessages: 60
+  name: Gmail
+  releaseDate: 2025-01-16
+  registryOverrides:
+    cloud:
+      enabled: true
+    oss:
+      enabled: true
+  releaseStage: alpha
+  remoteRegistries:
+    pypi:
+      enabled: true
+      packageName: airbyte-source-gmail
+  supportLevel: community
+  tags:
+    - language:python
+    - cdk:python
+metadataSpecVersion: "1.0"

@@ -1,0 +1,29 @@
+# See [Connector Acceptance Tests](https://docs.airbyte.com/connector-development/testing-connectors/connector-acceptance-tests-reference)
+# for more information about how to configure these tests
+connector_image: airbyte/source-gmail:dev
+tests:
+  spec:
+    - spec_path: "source_gmail/spec.yaml"
+  connection:
+    - config_path: "secret/config.json"
+      status: "succeed"
+    - config_path: "integration_tests/invalid_config.json"
+      status: "failed"
+  discovery:
+    - config_path: "secret/config.json"
+  basic_read:
+    - config_path: "secret/config.json"
+      configured_catalog_path: "configured_catalog.json"
+      expect_records:
+        path: "integration_tests/expected_records.jsonl"
+      empty_streams:
+        - name: "labels"
+          bypass_reason: "Labels stream will never be empty"
+  full_refresh:
+    - config_path: "secret/config.json"
+      configured_catalog_path: "configured_catalog.json"
+  incremental:
+    - config_path: "secret/config.json"
+      configured_catalog_path: "configured_catalog.json"
+      future_state:
+        future_state_path: "integration_tests/abnormal_state.json"

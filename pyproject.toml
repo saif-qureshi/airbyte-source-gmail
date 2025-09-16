@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "source-gmail"
+version = "0.1.0"
+description = "Source implementation for Gmail."
+authors = ["Airbyte <contact@airbyte.io>"]
+readme = "README.md"
+packages = [{include = "source_gmail"}]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+airbyte-cdk = "^6.61"
+google-api-python-client = "^2.100.0"
+google-auth = "^2.23.0"
+google-auth-httplib2 = "^0.1.0"
+google-auth-oauthlib = "^1.1.0"
+
+[tool.poetry.group.dev.dependencies]
+requests-mock = "^1.12.1"
+pytest-mock = "^3.14.0"
+pytest = "^8"
+
+[tool.poetry.scripts]
+source-gmail = "source_gmail.run:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

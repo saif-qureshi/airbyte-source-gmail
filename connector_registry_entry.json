@@ -1,0 +1,7 @@
+{
+  "github_connector_folders": {
+    "airbyte-integrations/connectors/source-gmail": {
+      "pythonConnectorVersion": "3"
+    }
+  }
+}

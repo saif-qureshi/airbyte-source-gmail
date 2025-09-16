@@ -1,0 +1,50 @@
+{
+  "streams": [
+    {
+      "stream": {
+        "name": "messages_details",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "threadId": {"type": ["string", "null"]},
+            "labelIds": {"type": ["array", "null"], "items": {"type": ["string", "null"]}},
+            "snippet": {"type": ["string", "null"]},
+            "historyId": {"type": ["string", "null"]},
+            "internalDate": {"type": ["string", "null"]},
+            "sizeEstimate": {"type": ["number", "null"]},
+            "payload": {"type": ["object", "null"]},
+            "decoded_html": {"type": ["string", "null"]},
+            "decoded_plain_text": {"type": ["string", "null"]}
+          },
+          "required": ["id"]
+        },
+        "supported_sync_modes": ["full_refresh"],
+        "source_defined_cursor": false,
+        "default_cursor_field": []
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    },
+    {
+      "stream": {
+        "name": "messages",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "threadId": {"type": ["string", "null"]}
+          },
+          "required": ["id"]
+        },
+        "supported_sync_modes": ["full_refresh"],
+        "source_defined_cursor": false,
+        "default_cursor_field": []
+      },
+      "sync_mode": "full_refresh",
+      "destination_sync_mode": "overwrite"
+    }
+  ]
+}

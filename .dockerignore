@@ -1,0 +1,65 @@
+# Secrets and credentials
+secrets/
+.secrets/
+*.secret
+*.key
+*.pem
+
+# Test files
+integration_tests/
+unit_tests/
+test_*.py
+*_test.py
+*.test.json
+configured_catalog.json
+sample_files/
+
+# Development files
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.pytest_cache/
+.coverage
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+docs/
+README.md
+CHANGELOG.md
+
+# Logs
+*.log
+logs/
+
+# Other
+.dockerignore
+Dockerfile
+connector_registry_entry.json
