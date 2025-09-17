@@ -93,14 +93,31 @@ class GmailClient:
             if page_token:
                 kwargs['pageToken'] = page_token
             
-            # Add spam/trash filter using query
+            # Build query with filters
+            query_parts = []
+            
+            if query:
+                query_parts.append(query)
+            
+            # Add spam/trash filter
             if not self.config.include_spam_trash:
-                # Use query to exclude spam and trash
-                spam_filter = "-in:spam -in:trash"
-                if query:
-                    kwargs['q'] = f"{query} {spam_filter}"
-                else:
-                    kwargs['q'] = spam_filter
+                query_parts.append("-in:spam -in:trash")
+            
+            # Add start date filter if provided
+            if self.config.start_date:
+                # Convert ISO format to Gmail query format (YYYY/MM/DD)
+                # Example: 2024-01-01T00:00:00.000000Z -> after:2024/1/1
+                try:
+                    date_part = self.config.start_date.split('T')[0]  # Get YYYY-MM-DD part
+                    year, month, day = date_part.split('-')
+                    gmail_date = f"{year}/{int(month)}/{int(day)}"  # Remove leading zeros
+                    query_parts.append(f"after:{gmail_date}")
+                except:
+                    # If parsing fails, use the date as-is
+                    query_parts.append(f"after:{self.config.start_date}")
+            
+            if query_parts:
+                kwargs['q'] = " ".join(query_parts)
             
             return self.service.users().messages().list(**kwargs).execute()
         
