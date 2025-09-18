@@ -2,46 +2,78 @@
   "streams": [
     {
       "stream": {
-        "name": "messages_details",
-        "json_schema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "type": "object",
-          "properties": {
-            "id": {"type": "string"},
-            "threadId": {"type": ["string", "null"]},
-            "labelIds": {"type": ["array", "null"], "items": {"type": ["string", "null"]}},
-            "snippet": {"type": ["string", "null"]},
-            "historyId": {"type": ["string", "null"]},
-            "internalDate": {"type": ["string", "null"]},
-            "sizeEstimate": {"type": ["number", "null"]},
-            "payload": {"type": ["object", "null"]},
-            "decoded_html": {"type": ["string", "null"]},
-            "decoded_plain_text": {"type": ["string", "null"]}
-          },
-          "required": ["id"]
-        },
-        "supported_sync_modes": ["full_refresh"],
-        "source_defined_cursor": false,
-        "default_cursor_field": []
-      },
-      "sync_mode": "full_refresh",
-      "destination_sync_mode": "overwrite"
-    },
-    {
-      "stream": {
         "name": "messages",
         "json_schema": {
           "$schema": "http://json-schema.org/draft-07/schema#",
           "type": "object",
           "properties": {
             "id": {"type": "string"},
-            "threadId": {"type": ["string", "null"]}
+            "thread_id": {"type": "string"},
+            "label_ids": {"type": ["null", "array"], "items": {"type": "string"}},
+            "from": {"type": ["null", "string"]},
+            "to": {"type": ["null", "string"]},
+            "cc": {"type": ["null", "string"]},
+            "bcc": {"type": ["null", "string"]},
+            "subject": {"type": ["null", "string"]},
+            "date": {"type": ["null", "string"]},
+            "internal_date": {"type": ["null", "string"], "format": "date-time"},
+            "snippet": {"type": ["null", "string"]},
+            "body_plain": {"type": ["null", "string"]},
+            "attachments": {
+              "type": ["null", "array"],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "filename": {"type": ["null", "string"]},
+                  "mime_type": {"type": ["null", "string"]},
+                  "size": {"type": ["null", "integer"]},
+                  "attachment_id": {"type": ["null", "string"]}
+                }
+              }
+            },
+            "size_estimate": {"type": ["null", "integer"]},
+            "history_id": {"type": ["null", "string"]},
+            "raw": {"type": ["null", "string"]}
           },
-          "required": ["id"]
+          "additionalProperties": true
+        },
+        "supported_sync_modes": ["full_refresh", "incremental"],
+        "source_defined_cursor": true,
+        "default_cursor_field": ["internal_date"],
+        "source_defined_primary_key": [["id"]],
+        "is_resumable": true
+      },
+      "sync_mode": "incremental",
+      "cursor_field": ["internal_date"],
+      "destination_sync_mode": "append_dedup"
+    },
+    {
+      "stream": {
+        "name": "labels",
+        "json_schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "name": {"type": "string"},
+            "type": {"type": ["null", "string"]},
+            "messages_total": {"type": ["null", "integer"]},
+            "messages_unread": {"type": ["null", "integer"]},
+            "threads_total": {"type": ["null", "integer"]},
+            "threads_unread": {"type": ["null", "integer"]},
+            "color": {
+              "type": ["null", "object"],
+              "properties": {
+                "text_color": {"type": ["null", "string"]},
+                "background_color": {"type": ["null", "string"]}
+              }
+            }
+          },
+          "additionalProperties": true
         },
         "supported_sync_modes": ["full_refresh"],
-        "source_defined_cursor": false,
-        "default_cursor_field": []
+        "source_defined_primary_key": [["id"]],
+        "is_resumable": false
       },
       "sync_mode": "full_refresh",
       "destination_sync_mode": "overwrite"

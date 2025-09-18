@@ -3,7 +3,7 @@
 #
 
 import base64
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 from airbyte_cdk.models import SyncMode
@@ -84,10 +84,29 @@ class GmailMessagesStream(Stream):
         """
         page_token = None
         
+        # For incremental sync, check if we have a state
+        if sync_mode == SyncMode.incremental and stream_state and self.cursor_field in stream_state:
+            # Get the last sync timestamp
+            last_sync_ms = stream_state[self.cursor_field]
+            # Convert to seconds and create a date filter
+            last_sync_date = datetime.fromtimestamp(int(last_sync_ms) / 1000, tz=timezone.utc)
+            # Format date for Gmail query (YYYY/MM/DD)
+            date_filter = f"after:{last_sync_date.year}/{last_sync_date.month}/{last_sync_date.day}"
+            
+            # Add to existing query
+            existing_query = self.config.get("query", "")
+            if existing_query:
+                query = f"{existing_query} {date_filter}"
+            else:
+                query = date_filter
+            
+        else:
+            query = self.config.get("query", "")
+        
         while True:
             # List messages
             response = self.client.list_messages(
-                query=self.config.get("query", ""),
+                query=query,
                 label_ids=self.config.get("labels"),
                 page_token=page_token
             )
@@ -104,9 +123,9 @@ class GmailMessagesStream(Stream):
                     headers = parse_message_headers(message.get("payload", {}).get("headers", []))
                     body_plain, body_html, attachments = parse_message_parts(message.get("payload", {}))
                     
-                    # Convert internal date to datetime
+                    # Convert internal date to datetime with RFC 3339 format
                     internal_date_ms = int(message.get("internalDate", 0))
-                    internal_date = datetime.fromtimestamp(internal_date_ms / 1000).isoformat()
+                    internal_date = datetime.fromtimestamp(internal_date_ms / 1000, tz=timezone.utc).isoformat()
                     
                     record = {
                         "id": message["id"],
@@ -141,6 +160,30 @@ class GmailMessagesStream(Stream):
             page_token = response.get("nextPageToken")
             if not page_token:
                 break
+    
+    def get_updated_state(self, current_stream_state: Mapping[str, Any], latest_record: Mapping[str, Any]) -> Mapping[str, Any]:
+        """
+        Update the state with the latest record's cursor field value.
+        """
+        if not latest_record:
+            return current_stream_state
+        
+        # Get the cursor value from the latest record
+        latest_cursor_value = latest_record.get(self.cursor_field)
+        if not latest_cursor_value:
+            return current_stream_state
+        
+        # Convert ISO datetime to milliseconds timestamp
+        if isinstance(latest_cursor_value, str):
+            dt = datetime.fromisoformat(latest_cursor_value.replace('Z', '+00:00'))
+            latest_cursor_value = int(dt.timestamp() * 1000)
+        
+        # Update state if this record is newer
+        current_cursor_value = current_stream_state.get(self.cursor_field, 0)
+        if latest_cursor_value > current_cursor_value:
+            return {self.cursor_field: latest_cursor_value}
+        
+        return current_stream_state
 
 
 class GmailLabelsStream(Stream):
